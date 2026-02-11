@@ -105,12 +105,11 @@ export default function VrmViewerComponent() {
       console.log('[Interaction] Character rejected grab!');
     };
 
-    // Disable orbit controls while arm is being dragged
-    const origIsDragging = viewer.interactions.armDragIK.getIsDragging.bind(viewer.interactions.armDragIK);
+    // Disable orbit controls while bone is being dragged
     const controls = viewer.getControls();
     let wasDragging = false;
     const syncControls = () => {
-      const dragging = origIsDragging();
+      const dragging = viewer.interactions.boneDragger.getIsDragging();
       if (dragging !== wasDragging) {
         wasDragging = dragging;
         if (controls) controls.enabled = !dragging;
