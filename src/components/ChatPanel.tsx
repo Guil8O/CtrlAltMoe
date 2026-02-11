@@ -17,7 +17,7 @@ const emotionColors: Record<string, string> = {
   neutral: '#E5E7EB',
 };
 
-export default function ChatPanel() {
+export default function ChatPanel({ showTopPadding = false }: { showTopPadding?: boolean }) {
   const {
     messages,
     activeCharacterId,
@@ -133,7 +133,7 @@ export default function ChatPanel() {
       {/* ───── Header ───── */}
       <div
         className="glass flex items-center justify-between px-4 py-3 shrink-0"
-        style={{ borderBottom: '1px solid var(--border-light)' }}
+        style={{ borderBottom: '1px solid var(--border-light)', paddingLeft: showTopPadding ? '100px' : undefined }}
       >
         <div className="flex items-center gap-3">
           <div

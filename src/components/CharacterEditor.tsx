@@ -27,6 +27,8 @@ export default function CharacterEditor() {
   const [showVrmSettings, setShowVrmSettings] = useState(false);
   const [vrmSettings, setVrmSettings] = useState<VrmSettings>({ ...DEFAULT_VRM_SETTINGS });
   const [vrmFiles, setVrmFiles] = useState<string[]>([]);
+  const [selectedVrmUrl, setSelectedVrmUrl] = useState('');
+  const [selectedVrmSource, setSelectedVrmSource] = useState<'url' | 'file'>('url');
 
   // Load VRM file list from pre-built manifest
   useEffect(() => {
@@ -41,6 +43,8 @@ export default function CharacterEditor() {
     })();
   }, []);
 
+  // Only load character data when the editor first opens (characterEditId changes),
+  // NOT on every char update — otherwise selecting a VRM model resets local state.
   useEffect(() => {
     if (char) {
       setName(char.name);
@@ -54,7 +58,8 @@ export default function CharacterEditor() {
       setIcon(char.icon);
       setVrmSettings(char.vrmSettings ?? { ...DEFAULT_VRM_SETTINGS });
     }
-  }, [char]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [characterEditId]);
 
   if (!characterEditId || !char) return null;
 
@@ -70,6 +75,8 @@ export default function CharacterEditor() {
       color,
       icon,
       vrmSettings,
+      vrmModelUrl: selectedVrmUrl || undefined,
+      vrmModelSource: selectedVrmSource,
     });
     setCharacterEditId(null);
   };
@@ -117,7 +124,8 @@ Write a 2-3 paragraph persona description. Output ONLY the persona text, nothing
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    updateCharacter(char.id, { vrmModelUrl: url, vrmModelSource: 'file' });
+    setSelectedVrmUrl(url);
+    setSelectedVrmSource('file');
   };
 
   return (
@@ -204,12 +212,11 @@ Write a 2-3 paragraph persona description. Output ONLY the persona text, nothing
             <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--text-secondary)' }}>VRM Model</label>
             {/* Dropdown from /public/vrm/ folder */}
             <select
-              value={char.vrmModelUrl || ''}
+              value={selectedVrmUrl}
               onChange={(e) => {
                 const val = e.target.value;
-                if (val) {
-                  updateCharacter(char.id, { vrmModelUrl: val, vrmModelSource: 'url' });
-                }
+                setSelectedVrmUrl(val);
+                setSelectedVrmSource('url');
               }}
               className="w-full text-xs"
               style={{
@@ -236,7 +243,7 @@ Write a 2-3 paragraph persona description. Output ONLY the persona text, nothing
               <Upload size={14} /> Upload Custom VRM
               <input type="file" accept=".vrm" className="hidden" onChange={handleVrmUpload} />
             </label>
-            {char.vrmModelUrl && !vrmFiles.some(f => assetPath(`/vrm/${f}`) === char.vrmModelUrl) && char.vrmModelUrl !== '' && (
+            {selectedVrmUrl && !vrmFiles.some(f => assetPath(`/vrm/${f}`) === selectedVrmUrl) && selectedVrmUrl !== '' && (
               <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>Using custom model</p>
             )}
           </div>

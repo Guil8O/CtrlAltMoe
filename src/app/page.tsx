@@ -61,6 +61,15 @@ export default function Home() {
     root.setAttribute('data-accent', settings.accentColor);
   }, [mounted, settings.theme, settings.accentColor]);
 
+  // Trigger Three.js canvas resize when VRM visibility changes
+  useEffect(() => {
+    if (mounted && vrmVisible) {
+      // Small delay to let grid transition finish
+      const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 350);
+      return () => clearTimeout(timer);
+    }
+  }, [vrmVisible, mounted]);
+
   if (!mounted) {
     return (
       <div className="w-screen h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
@@ -74,10 +83,15 @@ export default function Home() {
 
   return (
     <div className="relative h-screen" style={{ height: '100dvh' }}>
-      {/* Top bar (floating) — positioned after sidebar to avoid overlap */}
+      {/* Top bar (floating) — positioned after sidebar + VRM area to avoid overlap */}
       <div
         className="fixed top-3 z-40 flex items-center gap-1"
-        style={{ left: sidebarOpen ? 'calc(280px + 12px)' : '12px', transition: 'left 300ms ease' }}
+        style={{
+          left: sidebarOpen
+            ? (vrmVisible ? 'calc(280px + 12px)' : 'calc(280px + 12px)')
+            : '12px',
+          transition: 'left 300ms ease',
+        }}
       >
         <button className="btn-icon glass rounded-xl" onClick={toggleSidebar} title="Toggle sidebar">
           {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
@@ -109,14 +123,14 @@ export default function Home() {
           {sidebarOpen && <CharacterList />}
         </div>
 
-        {/* CENTER: VRM Viewer */}
-        <div style={{ overflow: 'hidden', minWidth: 0 }}>
-          {vrmVisible && <VrmViewer />}
+        {/* CENTER: VRM Viewer — always mounted to prevent Three.js re-init crop */}
+        <div style={{ overflow: 'hidden', minWidth: 0, visibility: vrmVisible ? 'visible' : 'hidden' }}>
+          <VrmViewer />
         </div>
 
         {/* RIGHT: Chat */}
         <div style={{ overflow: 'hidden', minWidth: 0 }}>
-          <ChatPanel />
+          <ChatPanel showTopPadding={!vrmVisible} />
         </div>
       </div>
 
