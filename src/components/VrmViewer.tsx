@@ -341,32 +341,7 @@ export default function VrmViewerComponent() {
         </div>
       )}
 
-      {/* ═══════ VRM Avatar Selector ═══════ */}
-      {vrmFiles.length > 0 && (
-        <div className="absolute top-3 left-3 z-10">
-          <select
-            onChange={(e) => handleSelectVrm(e.target.value)}
-            defaultValue=""
-            className="text-xs rounded"
-            style={{
-              padding: '8px 12px',
-              background: 'var(--bg-card)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-light)',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              outline: 'none',
-              boxShadow: 'var(--shadow-card)',
-              backdropFilter: 'blur(12px)',
-            }}
-          >
-            <option value="">Select Avatar...</option>
-            {vrmFiles.map(f => (
-              <option key={f} value={f}>{f.replace('.vrm', '')}</option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* VRM Avatar selection moved to CharacterEditor */}
 
       {/* ═══════ Right-side buttons ═══════ */}
       {vrmLoaded && (

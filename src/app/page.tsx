@@ -74,9 +74,10 @@ export default function Home() {
 
   return (
     <div className="relative h-screen" style={{ height: '100dvh' }}>
-      {/* Top bar (floating) */}
+      {/* Top bar (floating) — positioned after sidebar to avoid overlap */}
       <div
-        className="fixed top-3 left-3 z-40 flex items-center gap-1"
+        className="fixed top-3 z-40 flex items-center gap-1"
+        style={{ left: sidebarOpen ? 'calc(280px + 12px)' : '12px', transition: 'left 300ms ease' }}
       >
         <button className="btn-icon glass rounded-xl" onClick={toggleSidebar} title="Toggle sidebar">
           {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}

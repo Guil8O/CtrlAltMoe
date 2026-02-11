@@ -7,7 +7,7 @@
   <group name="General">
     <!-- Server URL for the Next.js app -->
     <entry name="serverUrl" type="String">
-      <default>http://localhost:3000</default>
+      <default>https://guil8o.github.io/CtrlAltMoe/</default>
     </entry>
 
     <!-- Whether to auto-start the Next.js dev server -->

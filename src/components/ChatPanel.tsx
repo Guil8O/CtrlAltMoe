@@ -5,8 +5,7 @@ import { useAppStore } from '@/store/app-store';
 import { sendChat, generateRollingSummary, type ChatOptions } from '@/lib/chat/engine';
 import { type ModelCapabilities } from '@/lib/providers';
 import {
-  Send, Monitor, Paperclip, Globe, Info, X, Image as ImageIcon,
-  Heart,
+  Send, Monitor, Paperclip, Globe, X, Image as ImageIcon,
 } from 'lucide-react';
 
 /* ───── Emotion badge color ───── */
@@ -36,7 +35,6 @@ export default function ChatPanel() {
   const [inputText, setInputText] = useState('');
   const [screenShareOn, setScreenShareOn] = useState(false);
   const [attachedImages, setAttachedImages] = useState<string[]>([]);
-  const [showStatus, setShowStatus] = useState(false);
 
   const activeChar = characters.find(c => c.id === activeCharacterId);
   const caps: ModelCapabilities = getCapabilities();
@@ -163,45 +161,6 @@ export default function ChatPanel() {
             </div>
           </div>
         </div>
-        <button
-          className="btn-icon relative"
-          onClick={() => setShowStatus(!showStatus)}
-        >
-          <Info size={16} />
-        </button>
-
-        {/* Status popover */}
-        {showStatus && activeChar && (
-          <div
-            className="absolute right-4 top-14 z-50 glass-card p-4 w-56 animate-fade-in"
-            style={{ boxShadow: 'var(--shadow-popup)' }}
-          >
-            <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Character Status</div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--text-tertiary)' }}>Affection</span>
-                <span className="flex items-center gap-1">
-                  <Heart size={10} style={{ color: 'var(--accent-peach-dark)' }} />
-                  {activeChar.affection}%
-                </span>
-              </div>
-              <div className="w-full h-1.5 rounded-full" style={{ background: 'var(--border-light)' }}>
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{ width: `${activeChar.affection}%`, background: 'var(--accent-peach-dark)' }}
-                />
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--text-tertiary)' }}>Emotion</span>
-                <span>{emotionLabel}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--text-tertiary)' }}>Messages</span>
-                <span>{messages.length}</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ───── Messages ───── */}
