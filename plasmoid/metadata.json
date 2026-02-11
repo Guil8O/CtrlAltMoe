@@ -1,0 +1,16 @@
+{
+    "KPlugin": {
+        "Id": "org.kde.plasma.ctrlaltmoe",
+        "Name": "Ctrl+Alt+Moe",
+        "Description": "VRM 3D Avatar + AI Chat desktop widget",
+        "Icon": "preferences-desktop-emoticons",
+        "Authors": [
+            { "Name": "Ctrl+Alt+Moe" }
+        ],
+        "Category": "Utilities",
+        "License": "GPL-3.0-or-later",
+        "Version": "1.0.0"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

@@ -1,0 +1,675 @@
+{
+  "version": 1,
+  "motions": [
+    {
+      "id": "Idle1", "file": "Idle1.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait", "default"]
+    },
+    {
+      "id": "Idle2", "file": "Idle2.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Idle3", "file": "Idle3.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Idle4", "file": "Idle4.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Idle5", "file": "Idle5.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Idle6", "file": "Idle6.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Idle7", "file": "Idle7.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["neutral"],
+      "altGroup": "idle_neutral",
+      "keywords": ["idle", "stand", "wait"]
+    },
+    {
+      "id": "Happy_Idle1", "file": "Happy Idle1.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy"],
+      "altGroup": "idle_happy",
+      "keywords": ["happy", "joy", "cheerful"]
+    },
+    {
+      "id": "Happy_Idle2", "file": "Happy Idle2.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy"],
+      "altGroup": "idle_happy",
+      "keywords": ["happy", "joy", "cheerful"]
+    },
+    {
+      "id": "Happy_Idle3", "file": "Happy Idle3.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy"],
+      "altGroup": "idle_happy",
+      "keywords": ["happy", "joy", "cheerful"]
+    },
+    {
+      "id": "Sad_Idle1", "file": "Sad Idle1.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["sad"],
+      "altGroup": "idle_sad",
+      "keywords": ["sad", "down", "depressed", "lonely"]
+    },
+    {
+      "id": "Sad_Idle2", "file": "Sad Idle2.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["sad"],
+      "altGroup": "idle_sad",
+      "keywords": ["sad", "down", "depressed"]
+    },
+    {
+      "id": "Angry_Idle", "file": "Angry Idle.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["angry"],
+      "altGroup": "idle_angry",
+      "keywords": ["angry", "irritated", "annoyed"]
+    },
+    {
+      "id": "Tired_Idle", "file": "Tired Idle.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.8,
+      "moodTags": ["sad", "neutral"],
+      "altGroup": "idle_tired",
+      "keywords": ["tired", "sleepy", "exhausted"]
+    },
+    {
+      "id": "Bored1", "file": "Bored1.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "idle_bored",
+      "keywords": ["bored", "uninterested"]
+    },
+    {
+      "id": "Bored2", "file": "Bored2.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "idle_bored",
+      "keywords": ["bored", "uninterested"]
+    },
+    {
+      "id": "Bored3", "file": "Bored3.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "idle_bored",
+      "keywords": ["bored", "uninterested"]
+    },
+    {
+      "id": "Bored4", "file": "Bored4.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "idle_bored",
+      "keywords": ["bored", "uninterested"]
+    },
+    {
+      "id": "Drunk_Idle1", "file": "Drunk Idle1.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "idle_drunk",
+      "keywords": ["drunk", "dizzy", "tipsy"]
+    },
+    {
+      "id": "Drunk_Idle2", "file": "Drunk Idle2.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "idle_drunk",
+      "keywords": ["drunk", "dizzy"]
+    },
+    {
+      "id": "Drunk_Idle3", "file": "Drunk Idle3.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "idle_drunk",
+      "keywords": ["drunk", "dizzy"]
+    },
+    {
+      "id": "Drunk_Idle4", "file": "Drunk Idle4.fbx", "format": "fbx",
+      "category": "idle", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "idle_drunk",
+      "keywords": ["drunk", "dizzy"]
+    },
+
+    {
+      "id": "Angry1", "file": "Angry1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry",
+      "keywords": ["angry", "mad", "furious", "rage"]
+    },
+    {
+      "id": "Angry2", "file": "Angry2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry",
+      "keywords": ["angry", "mad", "furious"]
+    },
+    {
+      "id": "Angry_Stomping", "file": "Angry_Stomping.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry",
+      "keywords": ["angry", "stomp", "tantrum"]
+    },
+    {
+      "id": "Angry_Point", "file": "Angry Point.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry",
+      "keywords": ["angry", "accuse", "blame", "point"]
+    },
+    {
+      "id": "Saying_Angry", "file": "Saying angry.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry_talking",
+      "keywords": ["angry", "scold", "yell", "argue"]
+    },
+    {
+      "id": "Saying_Angry1", "file": "Saying angry1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "angry_talking",
+      "keywords": ["angry", "scold", "argue"]
+    },
+    {
+      "id": "Yelling1", "file": "Yelling1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "yelling",
+      "keywords": ["yell", "shout", "scream"]
+    },
+    {
+      "id": "Yelling2", "file": "Yelling2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["angry"],
+      "altGroup": "yelling",
+      "keywords": ["yell", "shout", "scream"]
+    },
+    {
+      "id": "Crying1", "file": "Crying1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.5,
+      "moodTags": ["sad"],
+      "altGroup": "crying",
+      "keywords": ["cry", "weep", "sob", "tears"]
+    },
+    {
+      "id": "Crying2", "file": "Crying2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.5,
+      "moodTags": ["sad"],
+      "altGroup": "crying",
+      "keywords": ["cry", "weep", "sob"]
+    },
+    {
+      "id": "Surprised1", "file": "Surprised1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.25,
+      "moodTags": ["surprised"],
+      "altGroup": "surprised",
+      "keywords": ["surprise", "shock", "wow", "unexpected"]
+    },
+    {
+      "id": "Surprised2", "file": "Surprised2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.25,
+      "moodTags": ["surprised"],
+      "altGroup": "surprised",
+      "keywords": ["surprise", "shock"]
+    },
+    {
+      "id": "Disappointed1", "file": "Disappointed1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["sad"],
+      "altGroup": "disappointed",
+      "keywords": ["disappoint", "letdown", "sigh"]
+    },
+    {
+      "id": "Disappointed2", "file": "Disappointed2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["sad"],
+      "altGroup": "disappointed",
+      "keywords": ["disappoint", "letdown"]
+    },
+    {
+      "id": "Disappointed3", "file": "Disappointed3.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["sad"],
+      "altGroup": "disappointed",
+      "keywords": ["disappoint", "letdown"]
+    },
+    {
+      "id": "Disappointed4", "file": "Disappointed4.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["sad"],
+      "altGroup": "disappointed",
+      "keywords": ["disappoint", "letdown"]
+    },
+    {
+      "id": "Victory1", "file": "Victory1.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "victory",
+      "keywords": ["win", "victory", "celebrate", "success", "yes"]
+    },
+    {
+      "id": "Victory2", "file": "Victory2.fbx", "format": "fbx",
+      "category": "emotion", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "victory",
+      "keywords": ["win", "victory", "celebrate"]
+    },
+
+    {
+      "id": "Nod1", "file": "Nod1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "happy"],
+      "altGroup": "nod",
+      "keywords": ["nod", "yes", "agree", "ok", "okay", "sure"]
+    },
+    {
+      "id": "Nod2", "file": "Nod2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "happy"],
+      "altGroup": "nod",
+      "keywords": ["nod", "yes", "agree"]
+    },
+    {
+      "id": "Nod3", "file": "Nod3.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "happy"],
+      "altGroup": "nod",
+      "keywords": ["nod", "yes", "agree"]
+    },
+    {
+      "id": "Shake_Head_No1", "file": "Shake Head No1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "shake",
+      "keywords": ["no", "disagree", "shake", "deny", "refuse", "nope"]
+    },
+    {
+      "id": "Shake_Head_No2", "file": "Shake Head No2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "shake",
+      "keywords": ["no", "disagree", "shake"]
+    },
+    {
+      "id": "Shaking_Head_No", "file": "Shaking Head No.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "shake",
+      "keywords": ["no", "disagree", "shake"]
+    },
+    {
+      "id": "Hi", "file": "Hi.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "wave",
+      "keywords": ["hi", "hello", "wave", "greet", "hey", "bye", "goodbye"]
+    },
+    {
+      "id": "Hearing", "file": "Hearing.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "listen",
+      "keywords": ["listen", "hear", "what", "huh"]
+    },
+    {
+      "id": "Think1", "file": "Think1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "think",
+      "keywords": ["think", "wonder", "hmm", "consider", "ponder", "curious"]
+    },
+    {
+      "id": "Pointing1", "file": "Pointing1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "point",
+      "keywords": ["point", "look", "there", "that", "this"]
+    },
+    {
+      "id": "Pointing2", "file": "Pointing2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "point",
+      "keywords": ["point", "look"]
+    },
+    {
+      "id": "Pointing3", "file": "Pointing3.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "point",
+      "keywords": ["point", "look"]
+    },
+    {
+      "id": "Shrugging", "file": "Shrugging.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "shrug",
+      "keywords": ["shrug", "dunno", "whatever", "idk", "maybe"]
+    },
+    {
+      "id": "Clapping", "file": "Clapping.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "clap",
+      "keywords": ["clap", "applause", "bravo", "amazing", "great", "awesome"]
+    },
+    {
+      "id": "Bowing", "file": "Bowing.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "bow",
+      "keywords": ["bow", "respect", "thank", "sorry", "apology", "polite"]
+    },
+    {
+      "id": "Cheering1", "file": "Cheering1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "cheer",
+      "keywords": ["cheer", "hooray", "yay", "excited", "woohoo"]
+    },
+    {
+      "id": "Cheering2", "file": "Cheering2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "cheer",
+      "keywords": ["cheer", "hooray", "yay"]
+    },
+    {
+      "id": "Thankful", "file": "Thankful.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "thank",
+      "keywords": ["thank", "grateful", "appreciate"]
+    },
+    {
+      "id": "Yawn1", "file": "Yawn1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.5,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "yawn",
+      "keywords": ["yawn", "sleepy", "tired", "boring"]
+    },
+    {
+      "id": "Yawn2", "file": "Yawn2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.5,
+      "moodTags": ["neutral", "sad"],
+      "altGroup": "yawn",
+      "keywords": ["yawn", "sleepy", "tired"]
+    },
+    {
+      "id": "Talking1", "file": "Talking1.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "talking",
+      "keywords": ["talk", "speak", "explain", "tell", "say"]
+    },
+    {
+      "id": "Talking2", "file": "Talking2.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "talking",
+      "keywords": ["talk", "speak"]
+    },
+    {
+      "id": "Talking3", "file": "Talking3.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "talking",
+      "keywords": ["talk", "speak"]
+    },
+    {
+      "id": "Talking4", "file": "Talking4.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "talking",
+      "keywords": ["talk", "speak"]
+    },
+    {
+      "id": "Talking5", "file": "Talking5.fbx", "format": "fbx",
+      "category": "gesture", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["neutral"],
+      "altGroup": "talking",
+      "keywords": ["talk", "speak"]
+    },
+
+    {
+      "id": "Dance_Arms_Hip_Hop", "file": "Dance_Arms Hip Hop Dance.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "hiphop", "groove"]
+    },
+    {
+      "id": "Dance_Catwalk", "file": "Dance_Catwalk Walk.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.6,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "dance",
+      "keywords": ["dance", "walk", "catwalk", "model", "strut"]
+    },
+    {
+      "id": "Dance_Maraschino", "file": "Dance_Dancing Maraschino Step.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "step"]
+    },
+    {
+      "id": "Dance_Gangnam", "file": "Dance_Gangnam Style.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "gangnam", "kpop"]
+    },
+    {
+      "id": "Dance_Hip_Hop", "file": "Dance_Hip Hop Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "hiphop"]
+    },
+    {
+      "id": "Dance_HipDancing", "file": "Dance_HipDancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance"]
+    },
+    {
+      "id": "Dance_Jazz", "file": "Dance_Jazz Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "jazz"]
+    },
+    {
+      "id": "Dance_Jazz1", "file": "Dance_Jazz Dancing1.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "jazz"]
+    },
+    {
+      "id": "Dance_Locking", "file": "Dance_Locking Hip Hop Dance.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "locking", "hiphop"]
+    },
+    {
+      "id": "Dance_Northern_Floor", "file": "Dance_Northern Soul Floor Combo.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "soul", "floor"]
+    },
+    {
+      "id": "Dance_Northern_Spin", "file": "Dance_Northern Soul Spin Combo.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "soul", "spin"]
+    },
+    {
+      "id": "Dance_Salsa", "file": "Dance_Salsa Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "salsa", "latin"]
+    },
+    {
+      "id": "Dance_Salsa1", "file": "Dance_Salsa Dancing1.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "salsa"]
+    },
+    {
+      "id": "Dance_Samba", "file": "Dance_Samba Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "samba", "brazil"]
+    },
+    {
+      "id": "Dance_Silly", "file": "Dance_Silly Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "silly", "funny", "goofy"]
+    },
+    {
+      "id": "Dance_Snake", "file": "Dance_Snake Hip Hop Dance.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "snake", "hiphop"]
+    },
+    {
+      "id": "Dance_Swing", "file": "Dance_Swing Dancing.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "swing"]
+    },
+    {
+      "id": "Dance_Twerk", "file": "Dance_Twerk.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "twerk"]
+    },
+    {
+      "id": "Dance_Wave", "file": "Dance_Wave Hip Hop Dance.fbx", "format": "fbx",
+      "category": "dance", "playMode": "loop", "fadeDuration": 0.5,
+      "moodTags": ["happy"],
+      "altGroup": "dance",
+      "keywords": ["dance", "wave", "hiphop"]
+    },
+
+    {
+      "id": "Exercise_Air_Squat", "file": "exercise_Air Squat.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "squat", "workout", "fitness"]
+    },
+    {
+      "id": "Exercise_Bicycle_Crunch", "file": "exercise_Bicycle Crunch.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "crunch", "abs", "workout"]
+    },
+    {
+      "id": "Exercise_Circle_Crunch", "file": "exercise_Circle Crunch.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "crunch", "abs"]
+    },
+    {
+      "id": "Exercise_Cross_Jumps", "file": "exercise_Cross Jumps.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "jump", "cardio"]
+    },
+    {
+      "id": "Exercise_Pike_Walk", "file": "exercise_Pike Walk.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "pike", "stretch"]
+    },
+    {
+      "id": "Exercise_Boxing", "file": "exercise_boxing.fbx", "format": "fbx",
+      "category": "exercise", "playMode": "loop", "fadeDuration": 0.4,
+      "moodTags": ["angry", "neutral"],
+      "altGroup": "exercise",
+      "keywords": ["exercise", "boxing", "punch", "fight"]
+    },
+
+    {
+      "id": "Greeting_vrma", "file": "Greeting.vrma", "format": "vrma",
+      "category": "special", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "greeting",
+      "keywords": ["greet", "hello"]
+    },
+    {
+      "id": "Model_Pose_vrma", "file": "Model Pose.vrma", "format": "vrma",
+      "category": "special", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["happy", "neutral"],
+      "altGroup": "pose",
+      "keywords": ["pose", "model", "cute", "photo"]
+    },
+    {
+      "id": "Peace_Sign_vrma", "file": "Peace Sign.vrma", "format": "vrma",
+      "category": "special", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "peace",
+      "keywords": ["peace", "sign", "v", "cute", "photo"]
+    },
+    {
+      "id": "Spin_vrma", "file": "Spin.vrma", "format": "vrma",
+      "category": "special", "playMode": "once", "fadeDuration": 0.3,
+      "moodTags": ["happy"],
+      "altGroup": "spin",
+      "keywords": ["spin", "turn", "twirl"]
+    },
+    {
+      "id": "Squat_vrma", "file": "Squat.vrma", "format": "vrma",
+      "category": "special", "playMode": "once", "fadeDuration": 0.4,
+      "moodTags": ["neutral"],
+      "altGroup": "squat",
+      "keywords": ["squat", "exercise", "sit"]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <!-- Server URL for the Next.js app -->
+    <entry name="serverUrl" type="String">
+      <default>http://localhost:3000</default>
+    </entry>
+
+    <!-- Whether to auto-start the Next.js dev server -->
+    <entry name="autoStartServer" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <!-- Path to the project directory (for auto-start) -->
+    <entry name="projectPath" type="String">
+      <default></default>
+    </entry>
+
+    <!-- npm command: "dev" or "start" -->
+    <entry name="npmCommand" type="String">
+      <default>dev</default>
+    </entry>
+
+    <!-- Popup window width in grid units -->
+    <entry name="popupWidth" type="Int">
+      <default>60</default>
+    </entry>
+
+    <!-- Popup window height in grid units -->
+    <entry name="popupHeight" type="Int">
+      <default>45</default>
+    </entry>
+
+    <!-- Enable transparent background (if supported) -->
+    <entry name="transparentBackground" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <!-- Zoom factor for the WebView -->
+    <entry name="zoomFactor" type="Double">
+      <default>1.0</default>
+    </entry>
+  </group>
+</kcfg>

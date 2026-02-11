@@ -1,0 +1,127 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useAppStore } from '@/store/app-store';
+import CharacterList from '@/components/CharacterList';
+import ChatPanel from '@/components/ChatPanel';
+import CharacterEditor from '@/components/CharacterEditor';
+import SettingsDrawer from '@/components/SettingsDrawer';
+import { Settings, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
+import { runRetentionCleanup } from '@/lib/chat/engine';
+
+// Dynamic import for VRM viewer (SSR incompatible)
+const VrmViewer = dynamic(() => import('@/components/VrmViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center" style={{ background: 'var(--bg-secondary)' }}>
+      <div className="animate-pulse-slow text-sm" style={{ color: 'var(--text-tertiary)' }}>Loading 3D viewer...</div>
+    </div>
+  ),
+});
+
+export default function Home() {
+  const {
+    loadCharacters,
+    loadSettings,
+    toggleSidebar,
+    toggleSettings,
+    sidebarOpen,
+    settingsOpen,
+    characterEditId,
+    vrmVisible,
+    setVrmVisible,
+    settings,
+  } = useAppStore();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    loadSettings().then(() => {
+      loadCharacters();
+      // Run retention cleanup on load
+      runRetentionCleanup();
+    });
+  }, []);
+
+  // Apply theme on mount
+  useEffect(() => {
+    if (!mounted) return;
+    const root = document.documentElement;
+    if (settings.theme === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    } else if (settings.theme === 'light') {
+      root.removeAttribute('data-theme');
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) root.setAttribute('data-theme', 'dark');
+      else root.removeAttribute('data-theme');
+    }
+    root.setAttribute('data-accent', settings.accentColor);
+  }, [mounted, settings.theme, settings.accentColor]);
+
+  if (!mounted) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="text-center animate-fade-in">
+          <div className="text-2xl mb-2">✨</div>
+          <div className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Loading Ctrl+Alt+Moe...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-screen" style={{ height: '100dvh' }}>
+      {/* Top bar (floating) */}
+      <div
+        className="fixed top-3 left-3 z-40 flex items-center gap-1"
+      >
+        <button className="btn-icon glass rounded-xl" onClick={toggleSidebar} title="Toggle sidebar">
+          {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+        </button>
+        <button className="btn-icon glass rounded-xl" onClick={() => setVrmVisible(!vrmVisible)} title="Toggle VRM">
+          {vrmVisible ? <Eye size={16} /> : <EyeOff size={16} />}
+        </button>
+      </div>
+
+      <div
+        className="fixed top-3 right-3 z-40"
+      >
+        <button className="btn-icon glass rounded-xl" onClick={toggleSettings} title="Settings">
+          <Settings size={16} />
+        </button>
+      </div>
+
+      {/* Main 3-column layout */}
+      <div
+        className="h-full overflow-hidden"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `${sidebarOpen ? '280px' : '0px'} ${vrmVisible ? '1fr' : '0px'} minmax(320px, 420px)`,
+          transition: 'grid-template-columns 300ms ease',
+        }}
+      >
+        {/* LEFT: Character List */}
+        <div style={{ overflow: 'hidden', minWidth: 0 }}>
+          {sidebarOpen && <CharacterList />}
+        </div>
+
+        {/* CENTER: VRM Viewer */}
+        <div style={{ overflow: 'hidden', minWidth: 0 }}>
+          {vrmVisible && <VrmViewer />}
+        </div>
+
+        {/* RIGHT: Chat */}
+        <div style={{ overflow: 'hidden', minWidth: 0 }}>
+          <ChatPanel />
+        </div>
+      </div>
+
+      {/* Modals */}
+      {characterEditId && <CharacterEditor />}
+      <SettingsDrawer />
+    </div>
+  );
+}
