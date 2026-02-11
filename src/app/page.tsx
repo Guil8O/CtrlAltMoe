@@ -9,6 +9,7 @@ import CharacterEditor from '@/components/CharacterEditor';
 import SettingsDrawer from '@/components/SettingsDrawer';
 import { Settings, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
 import { runRetentionCleanup } from '@/lib/chat/engine';
+import { autoSaveToLS } from '@/lib/db/local-backup';
 
 // Dynamic import for VRM viewer (SSR incompatible)
 const VrmViewer = dynamic(() => import('@/components/VrmViewer'), {
@@ -43,6 +44,17 @@ export default function Home() {
       // Run retention cleanup on load
       runRetentionCleanup();
     });
+
+    // Auto-save all data to localStorage every 30 seconds
+    const saveInterval = setInterval(() => autoSaveToLS(), 30_000);
+    // Also save on page unload (browser close / navigate away)
+    const handleBeforeUnload = () => autoSaveToLS();
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      clearInterval(saveInterval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
   // Apply theme on mount
@@ -93,10 +105,10 @@ export default function Home() {
           transition: 'left 300ms ease',
         }}
       >
-        <button className="btn-icon glass rounded-xl" onClick={toggleSidebar} title="Toggle sidebar">
+        <button className="floating-btn" onClick={toggleSidebar} title="Toggle sidebar">
           {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
         </button>
-        <button className="btn-icon glass rounded-xl" onClick={() => setVrmVisible(!vrmVisible)} title="Toggle VRM">
+        <button className="floating-btn" onClick={() => setVrmVisible(!vrmVisible)} title="Toggle VRM">
           {vrmVisible ? <Eye size={16} /> : <EyeOff size={16} />}
         </button>
       </div>
@@ -104,7 +116,7 @@ export default function Home() {
       <div
         className="fixed top-3 right-3 z-40"
       >
-        <button className="btn-icon glass rounded-xl" onClick={toggleSettings} title="Settings">
+        <button className="floating-btn" onClick={toggleSettings} title="Settings">
           <Settings size={16} />
         </button>
       </div>

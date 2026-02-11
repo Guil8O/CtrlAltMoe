@@ -129,6 +129,11 @@ html, body {
   border-radius: var(--radius-pill);
   font-size: 11px;
   font-weight: 600;
+  color: #374151; /* always dark text for readability on light badges */
+}
+[data-theme="dark"] .badge-pill {
+  color: #F3F4F6;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .btn {
@@ -163,6 +168,29 @@ html, body {
   justify-content: center;
 }
 .btn-icon:hover { background: var(--border-light); color: var(--text-primary); }
+
+/* High-contrast floating buttons — always visible over any background */
+.floating-btn {
+  padding: 8px;
+  border-radius: var(--radius-lg);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.floating-btn:hover { background: rgba(0, 0, 0, 0.75); }
+[data-theme="dark"] .floating-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+[data-theme="dark"] .floating-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
 .input-pill {
   width: 100%;

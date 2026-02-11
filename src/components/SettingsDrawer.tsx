@@ -5,8 +5,9 @@ import { useAppStore } from '@/store/app-store';
 import { PROVIDER_CONFIGS, getModelCapabilities, type ProviderId } from '@/lib/providers';
 import {
   X, Settings as SettingsIcon, Sun, Moon, Monitor, Trash2,
-  Download, Upload,
+  Download, Upload, Save,
 } from 'lucide-react';
+import { autoSaveToLS } from '@/lib/db/local-backup';
 
 const PROVIDERS = Object.values(PROVIDER_CONFIGS);
 const ACCENT_OPTIONS = [
@@ -66,6 +67,8 @@ export default function SettingsDrawer() {
       accentColor: accentColor as 'mint' | 'lilac' | 'peach',
       language: language as 'en' | 'ja' | 'ko' | 'zh' | 'es',
     });
+    // Immediately persist to localStorage backup
+    setTimeout(() => autoSaveToLS(), 100);
     toggleSettings();
   };
 
@@ -285,6 +288,15 @@ export default function SettingsDrawer() {
           />
 
           <div className="flex gap-2 mt-3">
+            <button
+              className="btn btn-ghost flex-1 text-xs"
+              onClick={async () => {
+                await autoSaveToLS();
+                alert('✅ Data saved to local storage!');
+              }}
+            >
+              <Save size={13} /> Save Now
+            </button>
             <button className="btn btn-ghost flex-1 text-xs" onClick={handleExportAll}>
               <Download size={13} /> Export All
             </button>

@@ -11,6 +11,14 @@ import {
   type AppSettings,
   type RollingSummary,
 } from '@/lib/db/schema';
+import {
+  saveSettingsToLS,
+  saveCharactersToLS,
+  saveMessagesToLS,
+  saveSummaryToLS,
+  restoreFromLSIfNeeded,
+  autoSaveToLS,
+} from '@/lib/db/local-backup';
 import { type ProviderId, type ModelCapabilities, getModelCapabilities } from '@/lib/providers';
 import { VRMViewer } from '@/lib/vrm/viewer';
 
@@ -84,6 +92,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const allChars = await db.characters.toArray();
     const active = allChars.filter(c => !c.archived);
     set({ characters: active.sort((a, b) => b.updatedAt - a.updatedAt) });
+    saveCharactersToLS(active);
   },
 
   selectCharacter: (id) => {
@@ -168,7 +177,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       createdAt: Date.now(),
     };
     await db.messages.add(full);
-    set(s => ({ messages: [...s.messages, full] }));
+    set(s => {
+      const updated = [...s.messages, full];
+      saveMessagesToLS(msg.characterId, updated);
+      return { messages: updated };
+    });
 
     // Update character timestamp
     if (msg.characterId) {
@@ -193,6 +206,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   settings: { ...DEFAULT_SETTINGS },
 
   loadSettings: async () => {
+    // Restore from localStorage if IndexedDB was wiped (Plasma restart)
+    await restoreFromLSIfNeeded();
+
     const saved = await db.settings.get('global');
     if (saved) {
       set({ settings: saved });
@@ -206,6 +222,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const updated = { ...current, ...patch };
     await db.settings.put(updated);
     set({ settings: updated });
+    saveSettingsToLS(updated);
   },
 
   getCapabilities: () => {
@@ -234,7 +251,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   saveRollingSummary: async (characterId, content) => {
     const existing = get().rollingSummary;
     if (existing) {
+      const updated = { ...existing, content, updatedAt: Date.now(), coveredUntil: Date.now() };
       await db.rollingSummaries.update(existing.id, { content, updatedAt: Date.now(), coveredUntil: Date.now() });
+      saveSummaryToLS(updated);
     } else {
       const entry = {
         id: uuid(),
@@ -245,6 +264,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       };
       await db.rollingSummaries.add(entry);
       set({ rollingSummary: entry });
+      saveSummaryToLS(entry);
     }
   },
 }));

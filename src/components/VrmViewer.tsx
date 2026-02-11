@@ -63,6 +63,7 @@ export default function VrmViewerComponent() {
   // 2D background (CSS layer behind canvas)
   const [bg2dUrl, setBg2dUrl] = useState<string | null>(null);
   const [bg2dLabel, setBg2dLabel] = useState('');
+  const [bg2dFilename, setBg2dFilename] = useState('');
   const [bg2dScale, setBg2dScale] = useState(1);
   const [bg2dX, setBg2dX] = useState(0);
   const [bg2dY, setBg2dY] = useState(0);
@@ -161,7 +162,7 @@ export default function VrmViewerComponent() {
         // 2D flat layer
         viewer.clearBackground();
         setActiveBg(null);
-        setBg2dUrl(url); setBg2dLabel(file.name);
+        setBg2dUrl(url); setBg2dLabel(file.name); setBg2dFilename('');
         setBg2dScale(1); setBg2dX(0); setBg2dY(0);
       }
     }
@@ -203,7 +204,7 @@ export default function VrmViewerComponent() {
     } else {
       viewer.clearBackground();
       setActiveBg(null);
-      setBg2dUrl(url); setBg2dLabel(filename);
+      setBg2dUrl(url); setBg2dLabel(filename); setBg2dFilename(filename);
       setBg2dScale(1); setBg2dX(0); setBg2dY(0);
     }
   };
@@ -227,7 +228,7 @@ export default function VrmViewerComponent() {
     } else {
       viewer.clearBackground();
       setActiveBg(null);
-      setBg2dUrl(url); setBg2dLabel(file.name);
+      setBg2dUrl(url); setBg2dLabel(file.name); setBg2dFilename('');
       setBg2dScale(1); setBg2dX(0); setBg2dY(0);
     }
   };
@@ -244,6 +245,7 @@ export default function VrmViewerComponent() {
     setActiveBg(null);
     setBg2dUrl(null);
     setBg2dLabel('');
+    setBg2dFilename('');
   };
 
   const hasBgActive = !!activeBg || !!bg2dUrl;
@@ -444,14 +446,14 @@ export default function VrmViewerComponent() {
                       Select from folder
                     </label>
                     <select
-                      value={bg2dUrl || ''}
+                      value={bg2dFilename}
                       onChange={(e) => {
                         const val = e.target.value;
                         if (val) {
-                          const filename = val.split('/').pop() || val;
-                          handleSelectBg(filename);
+                          handleSelectBg(val);
                         } else {
                           handleClearBg();
+                          setBg2dFilename('');
                         }
                       }}
                       className="w-full text-xs rounded"
@@ -467,7 +469,7 @@ export default function VrmViewerComponent() {
                     >
                       <option value="">— None —</option>
                       {bgFiles.map(f => (
-                        <option key={f} value={`/background/${f}`}>{f}</option>
+                        <option key={f} value={f}>{f}</option>
                       ))}
                     </select>
                   </div>
