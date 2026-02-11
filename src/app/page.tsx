@@ -10,6 +10,7 @@ import SettingsDrawer from '@/components/SettingsDrawer';
 import { Settings, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
 import { runRetentionCleanup } from '@/lib/chat/engine';
 import { autoSaveToLS } from '@/lib/db/local-backup';
+import { getSaveDirectoryName, saveToDirectory } from '@/lib/db/fs-save';
 
 // Dynamic import for VRM viewer (SSR incompatible)
 const VrmViewer = dynamic(() => import('@/components/VrmViewer'), {
@@ -47,12 +48,33 @@ export default function Home() {
 
     // Auto-save all data to localStorage every 30 seconds
     const saveInterval = setInterval(() => autoSaveToLS(), 30_000);
+
+    // Auto-save to filesystem directory every 5 minutes (if configured)
+    const fsSaveInterval = setInterval(async () => {
+      const dirName = await getSaveDirectoryName();
+      if (!dirName) return;
+      try {
+        const { db, SCHEMA_VERSION } = await import('@/lib/db/schema');
+        const data = {
+          version: SCHEMA_VERSION,
+          savedAt: new Date().toISOString(),
+          settings: await db.settings.toArray(),
+          characters: await db.characters.toArray(),
+          messages: await db.messages.toArray(),
+          dailySummaries: await db.dailySummaries.toArray(),
+          rollingSummaries: await db.rollingSummaries.toArray(),
+        };
+        await saveToDirectory(data);
+      } catch { /* silent */ }
+    }, 300_000);
+
     // Also save on page unload (browser close / navigate away)
     const handleBeforeUnload = () => autoSaveToLS();
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       clearInterval(saveInterval);
+      clearInterval(fsSaveInterval);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);

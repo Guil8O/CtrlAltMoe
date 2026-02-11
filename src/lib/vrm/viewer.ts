@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { VRMModel } from './model';
+import { InteractionManager } from './interactions';
 import type { VrmSettings } from '@/lib/db/schema';
 
 /* ───── HDRI Background Config ───── */
@@ -20,6 +21,7 @@ export interface HdriBgConfig {
 export class VRMViewer {
   public isReady = false;
   public model: VRMModel | null = null;
+  public interactions = new InteractionManager();
 
   private renderer: THREE.WebGLRenderer | null = null;
   private scene: THREE.Scene;
@@ -27,6 +29,21 @@ export class VRMViewer {
   private controls: OrbitControls | null = null;
   private clock: THREE.Clock;
   private animationId: number | null = null;
+
+  /** Get the canvas element */
+  get canvas(): HTMLCanvasElement | null {
+    return this.renderer?.domElement ?? null;
+  }
+
+  /** Get the camera */
+  getCamera(): THREE.PerspectiveCamera | null {
+    return this.camera;
+  }
+
+  /** Get orbit controls (to disable during IK drag) */
+  getControls(): OrbitControls | null {
+    return this.controls;
+  }
 
   /* ── HDRI Background ── */
   private hdriBgMesh: THREE.Mesh | null = null;
@@ -94,6 +111,13 @@ export class VRMViewer {
 
     this.scene.add(vrm.scene);
     this.model = model;
+
+    // Bind interaction systems (head tracking, jelly click, IK drag)
+    if (this.renderer && this.camera) {
+      this.interactions.dispose(); // clean up previous bindings
+      this.interactions = new InteractionManager();
+      this.interactions.bind(vrm, this.renderer.domElement, this.camera);
+    }
 
     // Adjust camera to head
     requestAnimationFrame(() => this.resetCamera());
@@ -242,6 +266,7 @@ export class VRMViewer {
     const delta = this.clock.getDelta();
 
     this.model?.update(delta);
+    this.interactions.update(delta);
     this.controls?.update();
 
     if (this.renderer && this.camera) {
@@ -252,6 +277,7 @@ export class VRMViewer {
   dispose() {
     if (this.animationId) cancelAnimationFrame(this.animationId);
     window.removeEventListener('resize', this.resize);
+    this.interactions.dispose();
     this.unloadVRM();
     this.renderer?.dispose();
     this.controls?.dispose();

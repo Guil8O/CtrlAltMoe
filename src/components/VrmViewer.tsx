@@ -77,6 +77,7 @@ export default function VrmViewerComponent() {
 
   const activeChar = characters.find(c => c.id === activeCharacterId);
   const emotionLabel = activeChar ? getEmotionLabel(activeChar.emotionState) : 'neutral';
+  const updateCharacter = useAppStore(s => s.updateCharacter);
 
   useEffect(() => {
     if (canvasRef.current && !setupDone.current) {
@@ -84,6 +85,44 @@ export default function VrmViewerComponent() {
       viewer.setup(canvasRef.current);
     }
   }, [viewer]);
+
+  /* ── Interaction system: affection sync ── */
+  useEffect(() => {
+    if (!viewer || !activeChar) return;
+
+    // Pass current affection to IK system
+    viewer.interactions.setAffection(activeChar.affection);
+
+    // Register callbacks
+    viewer.interactions.onAffectionChange = (delta, reason) => {
+      if (!activeCharacterId) return;
+      const newVal = Math.min(100, Math.max(0, (activeChar.affection || 50) + delta));
+      updateCharacter(activeCharacterId, { affection: Math.round(newVal) });
+      console.log(`[Interaction] ${reason} (${delta > 0 ? '+' : ''}${delta})`);
+    };
+
+    viewer.interactions.onReject = () => {
+      console.log('[Interaction] Character rejected grab!');
+    };
+
+    // Disable orbit controls while arm is being dragged
+    const origIsDragging = viewer.interactions.armDragIK.getIsDragging.bind(viewer.interactions.armDragIK);
+    const controls = viewer.getControls();
+    let wasDragging = false;
+    const syncControls = () => {
+      const dragging = origIsDragging();
+      if (dragging !== wasDragging) {
+        wasDragging = dragging;
+        if (controls) controls.enabled = !dragging;
+      }
+    };
+    const intervalId = setInterval(syncControls, 100);
+
+    return () => {
+      clearInterval(intervalId);
+      if (controls) controls.enabled = true;
+    };
+  }, [viewer, activeCharacterId, activeChar?.affection, updateCharacter]);
 
   // Scan background folders on mount
   useEffect(() => {
