@@ -33,10 +33,10 @@ export class HeadTracker {
   private currentPitch = 0;
 
   // Tracking parameters
-  private readonly headLimitYaw = THREE.MathUtils.degToRad(20);    // head max ±20°
-  private readonly headLimitPitch = THREE.MathUtils.degToRad(15);  // head max ±15°
-  private readonly eyeLimitYaw = THREE.MathUtils.degToRad(25);     // eyes max ±25°
-  private readonly eyeLimitPitch = THREE.MathUtils.degToRad(20);   // eyes max ±20°
+  private readonly headLimitYaw = THREE.MathUtils.degToRad(30);    // head max ±30°
+  private readonly headLimitPitch = THREE.MathUtils.degToRad(22);  // head max ±22°
+  private readonly eyeLimitYaw = THREE.MathUtils.degToRad(17);     // eyes max ±17° (reduced to prevent whites-only)
+  private readonly eyeLimitPitch = THREE.MathUtils.degToRad(14);   // eyes max ±14°
   private readonly smoothSpeed = 2.5; // exponential smoothing factor
   private enabled = true;
 
@@ -354,10 +354,10 @@ export class BoneDragger {
   // Drag target (mouse world pos projected onto bone-depth plane)
   private dragTargetWorld = new THREE.Vector3();
 
-  // Blend back after release
+  // Blend back after release (0.3s smooth return)
   private blendingBack = false;
   private blendBackAlpha = 0;
-  private readonly blendBackSpeed = 3.0;
+  private readonly blendBackDuration = 0.3; // seconds
 
   // Affection for accept/reject (hand grabs)
   private affection = 50;
@@ -478,12 +478,29 @@ export class BoneDragger {
       rawBone.quaternion.multiply(localRot);
     }
 
-    // Blend back after release — animation naturally takes over
-    if (this.blendingBack) {
-      this.blendBackAlpha += delta * this.blendBackSpeed;
+    // Blend back after release — smoothly return over blendBackDuration
+    if (this.blendingBack && this.dragState) {
+      this.blendBackAlpha += delta / this.blendBackDuration;
       if (this.blendBackAlpha >= 1) {
+        // Fully returned
+        this.dragState.currentOffset.set(0, 0, 0);
         this.blendingBack = false;
         this.dragState = null;
+      } else {
+        // Lerp offset toward zero — apply diminishing rotation
+        const returnT = 1 - this.blendBackAlpha; // 1→0
+        const diminished = this.dragState.currentOffset.clone().multiplyScalar(returnT);
+
+        const parentWorldQuat = new THREE.Quaternion();
+        if (rawBone.parent) rawBone.parent.getWorldQuaternion(parentWorldQuat);
+
+        const boneUp = new THREE.Vector3(0, 1, 0).applyQuaternion(parentWorldQuat).normalize();
+        const targetDir = boneUp.clone().add(diminished.multiplyScalar(3)).normalize();
+        const worldRot = new THREE.Quaternion().setFromUnitVectors(boneUp, targetDir);
+
+        const parentInv = parentWorldQuat.clone().invert();
+        const localRot = parentInv.clone().multiply(worldRot).multiply(parentWorldQuat);
+        rawBone.quaternion.multiply(localRot);
       }
     }
   }
