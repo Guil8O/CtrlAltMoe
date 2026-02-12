@@ -1,91 +1,227 @@
 /**
- * Local Storage Backup — persistent layer for settings & data
+ * Local Storage Persistence — THE primary reliable storage layer.
  *
- * Plasma WebEngineView may clear IndexedDB on restart.
- * This module mirrors critical data to localStorage (more persistent)
- * and optionally to a user-chosen file path via File System Access API.
+ * Problem:
+ *   - KDE Plasma's WebEngineView (QtWebEngine) often WIPES IndexedDB on restart.
+ *   - File System Access API (showDirectoryPicker) does NOT work in QtWebEngine.
+ *   - Regular browser (Chrome/Firefox) keeps both IDB and localStorage fine.
+ *
+ * Solution:
+ *   - localStorage is the most reliable storage in both contexts.
+ *   - We save ALL data to localStorage on every mutation.
+ *   - On load, if IndexedDB is empty, we restore from localStorage.
+ *   - Export/Import uses JSON file download/upload (works everywhere).
+ *
+ * localStorage key layout:
+ *   ctrlaltmoe_settings    → AppSettings JSON
+ *   ctrlaltmoe_characters  → CharacterRecord[] JSON
+ *   ctrlaltmoe_msgs_{id}   → ChatMessage[] per character
+ *   ctrlaltmoe_summary_{id}→ RollingSummary per character
+ *   ctrlaltmoe_daily       → DailySummary[] JSON
+ *   ctrlaltmoe_lastSave    → ISO timestamp of last save
  */
 
-import { db, type AppSettings, type CharacterRecord, type ChatMessage, type RollingSummary, DEFAULT_SETTINGS, SCHEMA_VERSION } from './schema';
+import {
+  db,
+  type AppSettings,
+  type CharacterRecord,
+  type ChatMessage,
+  type RollingSummary,
+  type DailySummary,
+  DEFAULT_SETTINGS,
+  SCHEMA_VERSION,
+} from './schema';
 
-const LS_KEY_SETTINGS = 'ctrlaltmoe_settings';
-const LS_KEY_CHARACTERS = 'ctrlaltmoe_characters';
-const LS_KEY_MESSAGES = 'ctrlaltmoe_messages';
-const LS_KEY_SUMMARIES = 'ctrlaltmoe_summaries';
-const LS_KEY_FULL_BACKUP = 'ctrlaltmoe_backup';
+/* ═══════════════════════════════════════════
+   Keys
+   ═══════════════════════════════════════════ */
 
-/* ───── Save to localStorage ───── */
+const K = {
+  settings: 'ctrlaltmoe_settings',
+  characters: 'ctrlaltmoe_characters',
+  daily: 'ctrlaltmoe_daily',
+  lastSave: 'ctrlaltmoe_lastSave',
+  msgPrefix: 'ctrlaltmoe_msgs_',
+  sumPrefix: 'ctrlaltmoe_summary_',
+} as const;
+
+/* ═══════════════════════════════════════════
+   Helpers — safe JSON read/write
+   ═══════════════════════════════════════════ */
+
+function lsSet(key: string, value: unknown): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn('[LS] Write failed (quota?):', key, e);
+  }
+}
+
+function lsGet<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Save individual data types
+   ═══════════════════════════════════════════ */
 
 export function saveSettingsToLS(settings: AppSettings): void {
-  try {
-    localStorage.setItem(LS_KEY_SETTINGS, JSON.stringify(settings));
-  } catch { /* quota exceeded — silently fail */ }
+  lsSet(K.settings, settings);
 }
 
 export function saveCharactersToLS(characters: CharacterRecord[]): void {
-  try {
-    localStorage.setItem(LS_KEY_CHARACTERS, JSON.stringify(characters));
-  } catch { /* quota exceeded */ }
+  lsSet(K.characters, characters);
 }
 
 export function saveMessagesToLS(characterId: string, messages: ChatMessage[]): void {
-  try {
-    // Store per-character messages map
-    const existing = JSON.parse(localStorage.getItem(LS_KEY_MESSAGES) || '{}');
-    existing[characterId] = messages;
-    localStorage.setItem(LS_KEY_MESSAGES, JSON.stringify(existing));
-  } catch { /* quota exceeded */ }
+  lsSet(K.msgPrefix + characterId, messages);
 }
 
 export function saveSummaryToLS(summary: RollingSummary): void {
-  try {
-    const existing = JSON.parse(localStorage.getItem(LS_KEY_SUMMARIES) || '{}');
-    existing[summary.characterId] = summary;
-    localStorage.setItem(LS_KEY_SUMMARIES, JSON.stringify(existing));
-  } catch { /* quota exceeded */ }
+  lsSet(K.sumPrefix + summary.characterId, summary);
 }
 
-/* ───── Load from localStorage ───── */
+/* ═══════════════════════════════════════════
+   Load individual data types
+   ═══════════════════════════════════════════ */
 
 export function loadSettingsFromLS(): AppSettings | null {
-  try {
-    const raw = localStorage.getItem(LS_KEY_SETTINGS);
-    if (raw) return JSON.parse(raw);
-  } catch { /* parse error */ }
-  return null;
+  return lsGet<AppSettings>(K.settings);
 }
 
 export function loadCharactersFromLS(): CharacterRecord[] | null {
-  try {
-    const raw = localStorage.getItem(LS_KEY_CHARACTERS);
-    if (raw) return JSON.parse(raw);
-  } catch { /* parse error */ }
-  return null;
+  return lsGet<CharacterRecord[]>(K.characters);
 }
 
 export function loadMessagesFromLS(characterId: string): ChatMessage[] | null {
-  try {
-    const raw = localStorage.getItem(LS_KEY_MESSAGES);
-    if (raw) {
-      const map = JSON.parse(raw);
-      if (map[characterId]) return map[characterId];
-    }
-  } catch { /* parse error */ }
-  return null;
+  return lsGet<ChatMessage[]>(K.msgPrefix + characterId);
 }
 
 export function loadSummaryFromLS(characterId: string): RollingSummary | null {
-  try {
-    const raw = localStorage.getItem(LS_KEY_SUMMARIES);
-    if (raw) {
-      const map = JSON.parse(raw);
-      if (map[characterId]) return map[characterId];
-    }
-  } catch { /* parse error */ }
-  return null;
+  return lsGet<RollingSummary>(K.sumPrefix + characterId);
 }
 
-/* ───── Full backup (for manual file save/load) ───── */
+/* ═══════════════════════════════════════════
+   Full auto-save (call periodically + on unload)
+   ═══════════════════════════════════════════ */
+
+export async function autoSaveToLS(): Promise<void> {
+  try {
+    // Settings
+    const settings = await db.settings.get('global');
+    if (settings) saveSettingsToLS(settings);
+
+    // Characters
+    const chars = await db.characters.toArray();
+    saveCharactersToLS(chars);
+
+    // Messages per active character
+    for (const char of chars.filter(c => !c.archived)) {
+      const msgs = await db.messages
+        .where('[characterId+createdAt]')
+        .between([char.id, 0], [char.id, Infinity])
+        .toArray();
+      saveMessagesToLS(char.id, msgs);
+    }
+
+    // Summaries
+    const summaries = await db.rollingSummaries.toArray();
+    for (const s of summaries) saveSummaryToLS(s);
+
+    // Daily summaries
+    const daily = await db.dailySummaries.toArray();
+    lsSet(K.daily, daily);
+
+    // Timestamp
+    lsSet(K.lastSave, new Date().toISOString());
+
+    console.log('[LS] Auto-save complete');
+  } catch (err) {
+    console.warn('[LS] Auto-save failed:', err);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Restore from localStorage → IndexedDB
+   (Called on every app load, before anything else)
+   ═══════════════════════════════════════════ */
+
+export async function restoreFromLSIfNeeded(): Promise<boolean> {
+  try {
+    // Check if IndexedDB has settings — if yes, it's probably intact
+    const idbSettings = await db.settings.get('global');
+    const idbCharCount = await db.characters.count();
+
+    // If IDB has both settings and characters, no restore needed
+    if (idbSettings && idbCharCount > 0) {
+      return false;
+    }
+
+    console.log('[LS] IndexedDB appears empty/wiped. Attempting restore from localStorage…');
+
+    let restored = false;
+
+    // Restore settings
+    if (!idbSettings) {
+      const lsSettings = loadSettingsFromLS();
+      if (lsSettings) {
+        await db.settings.put(lsSettings);
+        restored = true;
+        console.log('[LS] Restored settings');
+      }
+    }
+
+    // Restore characters
+    if (idbCharCount === 0) {
+      const lsChars = loadCharactersFromLS();
+      if (lsChars && lsChars.length > 0) {
+        await db.characters.bulkPut(lsChars);
+        restored = true;
+        console.log(`[LS] Restored ${lsChars.length} characters`);
+
+        // Restore messages for each character
+        for (const char of lsChars) {
+          const msgs = loadMessagesFromLS(char.id);
+          if (msgs && msgs.length > 0) {
+            await db.messages.bulkPut(msgs);
+            console.log(`[LS] Restored ${msgs.length} messages for ${char.name}`);
+          }
+          const summary = loadSummaryFromLS(char.id);
+          if (summary) {
+            await db.rollingSummaries.put(summary);
+          }
+        }
+
+        // Restore daily summaries
+        const daily = lsGet<DailySummary[]>(K.daily);
+        if (daily && daily.length > 0) {
+          await db.dailySummaries.bulkPut(daily);
+        }
+      }
+    }
+
+    if (restored) {
+      console.log('[LS] ✅ Data restored from localStorage backup');
+    } else {
+      console.log('[LS] No localStorage backup found — fresh start');
+    }
+
+    return restored;
+  } catch (err) {
+    console.error('[LS] Restore from localStorage failed:', err);
+    return false;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Export / Import as JSON (download/upload)
+   Works in ALL browsers including QtWebEngine.
+   ═══════════════════════════════════════════ */
 
 export async function createFullBackup(): Promise<string> {
   const data = {
@@ -107,83 +243,35 @@ export async function restoreFullBackup(jsonStr: string): Promise<void> {
   if (data.dailySummaries) await db.dailySummaries.bulkPut(data.dailySummaries);
   if (data.rollingSummaries) await db.rollingSummaries.bulkPut(data.rollingSummaries);
   if (data.settings) await db.settings.bulkPut(data.settings);
+
+  // Also save to localStorage immediately so it survives IDB wipe
+  await autoSaveToLS();
 }
 
-/* ───── Restore IndexedDB from localStorage if IDB is empty ───── */
+/* ═══════════════════════════════════════════
+   Debug: check localStorage status
+   ═══════════════════════════════════════════ */
 
-export async function restoreFromLSIfNeeded(): Promise<boolean> {
-  // Check if IndexedDB has data
-  const idbSettings = await db.settings.get('global');
-  const idbChars = await db.characters.count();
+export function getStorageStatus(): {
+  lastSave: string | null;
+  settingsExists: boolean;
+  characterCount: number;
+  totalKeysUsed: number;
+} {
+  const lastSave = lsGet<string>(K.lastSave);
+  const settings = loadSettingsFromLS();
+  const chars = loadCharactersFromLS();
 
-  if (idbSettings && idbChars > 0) {
-    // IDB has data, no restore needed
-    return false;
+  let totalKeys = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith('ctrlaltmoe_')) totalKeys++;
   }
 
-  let restored = false;
-
-  // Restore settings from LS
-  if (!idbSettings) {
-    const lsSettings = loadSettingsFromLS();
-    if (lsSettings) {
-      await db.settings.put(lsSettings);
-      restored = true;
-    }
-  }
-
-  // Restore characters from LS
-  if (idbChars === 0) {
-    const lsChars = loadCharactersFromLS();
-    if (lsChars && lsChars.length > 0) {
-      await db.characters.bulkPut(lsChars);
-      restored = true;
-
-      // Restore messages for each character
-      for (const char of lsChars) {
-        const msgs = loadMessagesFromLS(char.id);
-        if (msgs && msgs.length > 0) {
-          await db.messages.bulkPut(msgs);
-        }
-        const summary = loadSummaryFromLS(char.id);
-        if (summary) {
-          await db.rollingSummaries.put(summary);
-        }
-      }
-    }
-  }
-
-  if (restored) {
-    console.log('[Ctrl+Alt+Moe] Restored data from localStorage backup');
-  }
-
-  return restored;
-}
-
-/* ───── Auto-save full snapshot to localStorage ───── */
-
-export async function autoSaveToLS(): Promise<void> {
-  try {
-    const settings = await db.settings.get('global');
-    if (settings) saveSettingsToLS(settings);
-
-    const chars = await db.characters.toArray();
-    saveCharactersToLS(chars);
-
-    // Save messages for each active (non-archived) character
-    for (const char of chars.filter(c => !c.archived)) {
-      const msgs = await db.messages
-        .where('[characterId+createdAt]')
-        .between([char.id, 0], [char.id, Infinity])
-        .toArray();
-      saveMessagesToLS(char.id, msgs);
-    }
-
-    const summaries = await db.rollingSummaries.toArray();
-    for (const s of summaries) {
-      saveSummaryToLS(s);
-    }
-  } catch (err) {
-    console.warn('[Ctrl+Alt+Moe] Auto-save to localStorage failed:', err);
-  }
+  return {
+    lastSave,
+    settingsExists: !!settings,
+    characterCount: chars?.length ?? 0,
+    totalKeysUsed: totalKeys,
+  };
 }

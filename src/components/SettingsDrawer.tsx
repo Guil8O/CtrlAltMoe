@@ -5,16 +5,9 @@ import { useAppStore } from '@/store/app-store';
 import { PROVIDER_CONFIGS, getModelCapabilities, type ProviderId } from '@/lib/providers';
 import {
   X, Settings as SettingsIcon, Sun, Moon, Monitor, Trash2,
-  Download, Upload, Save, FolderOpen, FolderX,
+  Download, Upload, Save, HardDrive, Check,
 } from 'lucide-react';
-import { autoSaveToLS } from '@/lib/db/local-backup';
-import {
-  isFileSystemAccessSupported,
-  pickSaveDirectory,
-  getSaveDirectoryName,
-  saveToDirectory,
-  clearSaveDirectory,
-} from '@/lib/db/fs-save';
+import { autoSaveToLS, getStorageStatus, createFullBackup, restoreFullBackup } from '@/lib/db/local-backup';
 
 const PROVIDERS = Object.values(PROVIDER_CONFIGS);
 const ACCENT_OPTIONS = [
@@ -34,8 +27,7 @@ export default function SettingsDrawer() {
   const [theme, setTheme] = useState(settings.theme);
   const [accentColor, setAccentColor] = useState(settings.accentColor);
   const [language, setLanguage] = useState(settings.language ?? 'en');
-  const [saveDirName, setSaveDirName] = useState<string | null>(null);
-  const fsSupported = isFileSystemAccessSupported();
+  const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
   useEffect(() => {
     setProvider(settings.provider);
@@ -47,11 +39,6 @@ export default function SettingsDrawer() {
     setAccentColor(settings.accentColor);
     setLanguage(settings.language ?? 'en');
   }, [settings]);
-
-  // Load previously picked directory name
-  useEffect(() => {
-    getSaveDirectoryName().then(name => setSaveDirName(name));
-  }, []);
 
   const providerConfig = PROVIDER_CONFIGS[provider as ProviderId];
   const models = providerConfig?.models || [];
@@ -103,22 +90,16 @@ export default function SettingsDrawer() {
   }, [theme, accentColor]);
 
   const handleExportAll = async () => {
-    const { db, SCHEMA_VERSION } = await import('@/lib/db/schema');
-    const data = {
-      version: SCHEMA_VERSION,
-      exportedAt: new Date().toISOString(),
-      characters: await db.characters.toArray(),
-      messages: await db.messages.toArray(),
-      dailySummaries: await db.dailySummaries.toArray(),
-      rollingSummaries: await db.rollingSummaries.toArray(),
-      settings: await db.settings.toArray(),
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    // Build backup from both IDB + localStorage
+    const jsonStr = await createFullBackup();
+    const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `ctrl-alt-moe-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
@@ -127,13 +108,8 @@ export default function SettingsDrawer() {
     if (!file) return;
     const text = await file.text();
     try {
-      const data = JSON.parse(text);
-      const { db } = await import('@/lib/db/schema');
-      if (data.characters) await db.characters.bulkPut(data.characters);
-      if (data.messages) await db.messages.bulkPut(data.messages);
-      if (data.dailySummaries) await db.dailySummaries.bulkPut(data.dailySummaries);
-      if (data.rollingSummaries) await db.rollingSummaries.bulkPut(data.rollingSummaries);
-      if (data.settings) await db.settings.bulkPut(data.settings);
+      // restoreFullBackup handles IDB + localStorage
+      await restoreFullBackup(text);
       window.location.reload();
     } catch (err) {
       alert('Invalid backup file');
@@ -289,51 +265,23 @@ export default function SettingsDrawer() {
 
         {/* ───── Data ───── */}
         <Section title="Data & Privacy">
-          {/* Save location */}
-          <label className="text-xs mb-1 block" style={{ color: 'var(--text-tertiary)' }}>
-            Save Location
-          </label>
-          {fsSupported ? (
-            <div className="flex gap-2 mb-3">
-              <div
-                className="flex-1 text-xs truncate px-2 py-1.5 rounded"
-                style={{
-                  background: 'var(--bg-input)',
-                  border: '1px solid var(--border-medium)',
-                  color: saveDirName ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                  lineHeight: '1.6',
-                }}
-              >
-                {saveDirName ? `📁 ${saveDirName}/` : 'Not set (browser storage)'}
-              </div>
-              <button
-                className="btn btn-ghost text-xs"
-                style={{ whiteSpace: 'nowrap' }}
-                onClick={async () => {
-                  const name = await pickSaveDirectory();
-                  if (name) setSaveDirName(name);
-                }}
-              >
-                <FolderOpen size={13} /> Browse
-              </button>
-              {saveDirName && (
-                <button
-                  className="btn btn-ghost text-xs"
-                  onClick={async () => {
-                    await clearSaveDirectory();
-                    setSaveDirName(null);
-                  }}
-                  title="Clear save location"
-                >
-                  <FolderX size={13} />
-                </button>
-              )}
-            </div>
-          ) : (
-            <p className="text-[10px] mb-3" style={{ color: 'var(--text-tertiary)' }}>
-              File system save not supported in this browser. Data is stored in browser storage.
-            </p>
-          )}
+          {/* Storage status */}
+          <div
+            className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded text-[11px]"
+            style={{
+              background: 'var(--bg-input)',
+              border: '1px solid var(--border-light)',
+              color: 'var(--text-secondary)',
+            }}
+          >
+            <HardDrive size={12} style={{ opacity: 0.6 }} />
+            <span>Data stored in browser localStorage</span>
+            {saveStatus && (
+              <span className="ml-auto flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+                <Check size={11} /> {saveStatus}
+              </span>
+            )}
+          </div>
 
           <label className="text-xs mb-1 block" style={{ color: 'var(--text-tertiary)' }}>
             Retention Period (days)
@@ -352,29 +300,15 @@ export default function SettingsDrawer() {
               className="btn btn-ghost flex-1 text-xs"
               onClick={async () => {
                 await autoSaveToLS();
-                // Also save to directory if configured
-                if (saveDirName) {
-                  const { db, SCHEMA_VERSION } = await import('@/lib/db/schema');
-                  const data = {
-                    version: SCHEMA_VERSION,
-                    savedAt: new Date().toISOString(),
-                    settings: await db.settings.toArray(),
-                    characters: await db.characters.toArray(),
-                    messages: await db.messages.toArray(),
-                    dailySummaries: await db.dailySummaries.toArray(),
-                    rollingSummaries: await db.rollingSummaries.toArray(),
-                  };
-                  const ok = await saveToDirectory(data);
-                  alert(ok ? '✅ Data saved to local storage & directory!' : '⚠️ Saved to local storage, but directory write failed.');
-                } else {
-                  alert('✅ Data saved to local storage!');
-                }
+                const status = getStorageStatus();
+                setSaveStatus(`${status.characterCount} chars`);
+                setTimeout(() => setSaveStatus(null), 3000);
               }}
             >
               <Save size={13} /> Save Now
             </button>
             <button className="btn btn-ghost flex-1 text-xs" onClick={handleExportAll}>
-              <Download size={13} /> Export All
+              <Download size={13} /> Export
             </button>
             <label className="btn btn-ghost flex-1 text-xs cursor-pointer">
               <Upload size={13} /> Import
