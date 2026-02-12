@@ -7,7 +7,8 @@ import {
   X, Settings as SettingsIcon, Sun, Moon, Monitor, Trash2,
   Download, Upload, Save, HardDrive, Check,
 } from 'lucide-react';
-import { autoSaveToLS, getStorageStatus, createFullBackup, restoreFullBackup } from '@/lib/db/local-backup';
+import { autoSaveToLS, getStorageStatus, createFullBackup, restoreFullBackup, getSaveDirectory } from '@/lib/db/local-backup';
+import { isBridgeReady } from '@/lib/db/plasma-bridge';
 
 const PROVIDERS = Object.values(PROVIDER_CONFIGS);
 const ACCENT_OPTIONS = [
@@ -28,6 +29,12 @@ export default function SettingsDrawer() {
   const [accentColor, setAccentColor] = useState(settings.accentColor);
   const [language, setLanguage] = useState(settings.language ?? 'en');
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const [savePath, setSavePath] = useState<string | null>(null);
+
+  // Resolve save path on mount
+  useEffect(() => {
+    getSaveDirectory().then(p => setSavePath(p));
+  }, []);
 
   useEffect(() => {
     setProvider(settings.provider);
@@ -267,19 +274,26 @@ export default function SettingsDrawer() {
         <Section title="Data & Privacy">
           {/* Storage status */}
           <div
-            className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded text-[11px]"
+            className="flex flex-col gap-1 mb-3 px-2 py-1.5 rounded text-[11px]"
             style={{
               background: 'var(--bg-input)',
               border: '1px solid var(--border-light)',
               color: 'var(--text-secondary)',
             }}
           >
-            <HardDrive size={12} style={{ opacity: 0.6 }} />
-            <span>Data stored in browser localStorage</span>
-            {saveStatus && (
-              <span className="ml-auto flex items-center gap-1" style={{ color: 'var(--accent)' }}>
-                <Check size={11} /> {saveStatus}
-              </span>
+            <div className="flex items-center gap-2">
+              <HardDrive size={12} style={{ opacity: 0.6 }} />
+              <span>{isBridgeReady() ? '💾 File storage (KDE widget)' : '🌐 Browser localStorage'}</span>
+              {saveStatus && (
+                <span className="ml-auto flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+                  <Check size={11} /> {saveStatus}
+                </span>
+              )}
+            </div>
+            {savePath && (
+              <div className="text-[10px] pl-5 truncate" style={{ color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>
+                📂 {savePath}
+              </div>
             )}
           </div>
 

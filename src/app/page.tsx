@@ -9,7 +9,7 @@ import CharacterEditor from '@/components/CharacterEditor';
 import SettingsDrawer from '@/components/SettingsDrawer';
 import { Settings, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
 import { runRetentionCleanup } from '@/lib/chat/engine';
-import { autoSaveToLS } from '@/lib/db/local-backup';
+import { autoSaveToLS, initStorage } from '@/lib/db/local-backup';
 
 // Dynamic import for VRM viewer (SSR incompatible)
 const VrmViewer = dynamic(() => import('@/components/VrmViewer'), {
@@ -39,13 +39,16 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    loadSettings().then(() => {
-      loadCharacters();
-      // Run retention cleanup on load
-      runRetentionCleanup();
+
+    // Initialise persistent storage (Plasma bridge or LS), then load data
+    initStorage().then(() => {
+      loadSettings().then(() => {
+        loadCharacters();
+        runRetentionCleanup();
+      });
     });
 
-    // Auto-save all data to localStorage every 30 seconds
+    // Auto-save every 30 seconds
     const saveInterval = setInterval(() => autoSaveToLS(), 30_000);
 
     // Also save on page unload (browser close / navigate away)

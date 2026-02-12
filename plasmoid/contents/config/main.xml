@@ -44,5 +44,10 @@
     <entry name="zoomFactor" type="Double">
       <default>1.0</default>
     </entry>
+
+    <!-- Custom save path for app data (empty = default XDG data dir) -->
+    <entry name="savePath" type="String">
+      <default></default>
+    </entry>
   </group>
 </kcfg>
